@@ -22,9 +22,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.inject.assistedinject.Assisted;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.Index;
-import org.elasticsearch.index.settings.IndexSettings;
-
-import java.io.Reader;
+import org.elasticsearch.index.settings.IndexSettingsService;
 
 import static org.elasticsearch.indices.analysis.hanlp.Settings.*;
 
@@ -45,9 +43,10 @@ public class HanLpTokenizerTokenizerFactory extends AbstractTokenizerFactory {
     private boolean numberQuantifierRecognize = false;
     private int threads = 1;
 
+    //按IK修改API
     @Inject
-    public HanLpTokenizerTokenizerFactory(Index index, @IndexSettings Settings indexSettings, @Assisted String name, @Assisted Settings settings) {
-        super(index, indexSettings, name, settings);
+    public HanLpTokenizerTokenizerFactory(Index index, IndexSettingsService indexSettings, @Assisted String name, @Assisted Settings settings) {
+        super(index, indexSettings.getSettings(), name, settings);
 
         indexMode = settings.getAsBoolean(INDEX_MODE, indexMode);
         nameRecognize = settings.getAsBoolean(NAME_RECOGNIZE, nameRecognize);
@@ -61,10 +60,22 @@ public class HanLpTokenizerTokenizerFactory extends AbstractTokenizerFactory {
         numberQuantifierRecognize = settings.getAsBoolean(NUMBER_QUANTIFIER_RECOGNIZE, numberQuantifierRecognize);
         threads = settings.getAsInt(THREADS, threads); // if more than 1, it means use multi-threading
     }
-
+    //按IK代码修改
     @Override
-    public Tokenizer create(Reader reader) {
-        return new HanLPTokenizer(HanLP.newSegment()
+    public Tokenizer create() {
+//        return new HanLPTokenizer(HanLP.newSegment()
+//                .enableIndexMode(indexMode)
+//                .enableNameRecognize(nameRecognize)
+//                .enableTranslatedNameRecognize(translatedNameRecognize)
+//                .enableJapaneseNameRecognize(japaneseNameRecognize)
+//                .enablePlaceRecognize(placeRecognize)
+//                .enableOrganizationRecognize(organizationRecognize)
+//                .enableCustomDictionary(useCustomDictionary)
+//                .enablePartOfSpeechTagging(speechTagging)
+//                .enableOffset(offset)
+//                .enableNumberQuantifierRecognize(numberQuantifierRecognize)
+//                .enableMultithreading(threads), null, speechTagging, reader);
+                return new HanLPTokenizer(HanLP.newSegment()
                 .enableIndexMode(indexMode)
                 .enableNameRecognize(nameRecognize)
                 .enableTranslatedNameRecognize(translatedNameRecognize)
@@ -75,7 +86,7 @@ public class HanLpTokenizerTokenizerFactory extends AbstractTokenizerFactory {
                 .enablePartOfSpeechTagging(speechTagging)
                 .enableOffset(offset)
                 .enableNumberQuantifierRecognize(numberQuantifierRecognize)
-                .enableMultithreading(threads), null, speechTagging, reader);
+                .enableMultithreading(threads), null, speechTagging);
     }
 
 }

@@ -21,7 +21,7 @@ import org.elasticsearch.common.inject.assistedinject.Assisted;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.Index;
-import org.elasticsearch.index.settings.IndexSettings;
+import org.elasticsearch.index.settings.IndexSettingsService;
 
 import static org.elasticsearch.indices.analysis.hanlp.Settings.*;
 
@@ -33,8 +33,8 @@ public class HanLpAnalyzerProvider extends AbstractIndexAnalyzerProvider<HanLPAn
     private final HanLPAnalyzer analyzer;
 
     @Inject
-    public HanLpAnalyzerProvider(Index index, @IndexSettings Settings indexSettings, Environment env, @Assisted String name, @Assisted Settings settings) {
-        super(index, indexSettings, name, settings);
+    public HanLpAnalyzerProvider(Index index, IndexSettingsService indexSettingsService, Environment env, @Assisted String name, @Assisted Settings settings) {
+        super(index, indexSettingsService.getSettings(), name, settings);
 
         boolean indexMode = settings.getAsBoolean(INDEX_MODE, false);
         boolean nameRecognize = settings.getAsBoolean(NAME_RECOGNIZE, true);
@@ -48,9 +48,7 @@ public class HanLpAnalyzerProvider extends AbstractIndexAnalyzerProvider<HanLPAn
         boolean numberQuantifierRecognize = settings.getAsBoolean(NUMBER_QUANTIFIER_RECOGNIZE, false);
         int threads = settings.getAsInt(THREADS, 1); // if more than 1, it means use multi-threading
 
-        analyzer = new HanLPAnalyzer(indexMode, nameRecognize, translatedNameRecognize, japaneseNameRecognize,
-                placeRecognize, organizationRecognize, useCustomDictionary, speechTagging, offset,
-                numberQuantifierRecognize, threads, null);
+        analyzer = new HanLPAnalyzer();
     }
 
     @Override

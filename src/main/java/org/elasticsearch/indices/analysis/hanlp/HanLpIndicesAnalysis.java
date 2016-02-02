@@ -71,12 +71,10 @@ public class HanLpIndicesAnalysis extends AbstractComponent {
         // Register hanlp analyzer
         indicesAnalysisService.analyzerProviderFactories().put("hanlp",
                 new PreBuiltAnalyzerProviderFactory("hanlp", AnalyzerScope.INDICES,
-                        new HanLPAnalyzer(analyzerIndexMode, analyzerNameRecognize, analyzerTranslatedNameRecognize,
-                                analyzerJapaneseNameRecognize, analyzerPlaceRecognize, analyzerOrganizationRecognize,
-                                analyzerUseCustomDictionary, analyzerSpeechTagging, analyzerOffset,
-                                analyzerNumberQuantifierRecognize, analyzerThreads, null)));
+                        new HanLPAnalyzer()));
 
         // Register hanlp_tokenizer tokenizer
+        //按IK修改
         indicesAnalysisService.tokenizerFactories().put("hanlp_tokenizer", new PreBuiltTokenizerFactoryFactory(new TokenizerFactory() {
             @Override
             public String name() {
@@ -84,7 +82,7 @@ public class HanLpIndicesAnalysis extends AbstractComponent {
             }
 
             @Override
-            public Tokenizer create(Reader reader) {
+            public Tokenizer create() {
                 return new HanLPTokenizer(HanLP.newSegment()
                         .enableIndexMode(tokenizerIndexMode)
                         .enableNameRecognize(tokenizerNameRecognize)
@@ -96,7 +94,7 @@ public class HanLpIndicesAnalysis extends AbstractComponent {
                         .enablePartOfSpeechTagging(tokenizerSpeechTagging)
                         .enableOffset(tokenizerOffset)
                         .enableNumberQuantifierRecognize(tokenizerNumberQuantifierRecognize)
-                        .enableMultithreading(tokenizerThreads), null, tokenizerSpeechTagging, reader);
+                        .enableMultithreading(tokenizerThreads), null, tokenizerSpeechTagging);
             }
         }));
 
